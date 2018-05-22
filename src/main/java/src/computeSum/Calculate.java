@@ -20,7 +20,7 @@ public class Calculate {
 	/*
 	 *  Constructor - uses a string and a delimiter as input
 	 */
-	public Calculate(String str, String inputDelim) {
+	public Calculate(String str, Character inputDelim) {
 		this.str = str;		
 
 		/*
@@ -90,7 +90,7 @@ public class Calculate {
 		 *  If delimiter from string is equal to delimiter from input,
 		 *  or delimiter from string is empty (necessary in cases of using a single number as input), continue
 		 */
-		else if (inputDelim.equals(delimiter) || delimiter.equals("")) {
+		else if (Character.toString(inputDelim).equals(delimiter) || delimiter.equals("")) {
 
 			/*
 			 *  If the string is a single number lower than 100, this number is the result

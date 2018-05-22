@@ -11,7 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
+import static org.junit.matchers.JUnitMatchers.*;
 /*
  *  JUnit test
  */
@@ -36,24 +36,40 @@ public class AppTest {
         this.mockMvc.perform(get("/computeSum?input=1,2,3")).andDo(print()).andExpect(status().isOk());
     }
     
-    @Test    
+    @SuppressWarnings("deprecation")
+	@Test    
     public void testReturnError1() throws Exception {
-        this.mockMvc.perform(get("/computeSum?input=100,12,5")).andDo(print()).andExpect(status().isBadRequest());
+        this.mockMvc.perform(get("/computeSum?input=100,12,5"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(status().reason(containsString("Number higher than 100 not supported")));
     }
-    
-    @Test    
+
+	@SuppressWarnings("deprecation")
+	@Test    
     public void testReturnError2() throws Exception {
-        this.mockMvc.perform(get("/computeSum?input=1,-2,3")).andDo(print()).andExpect(status().isBadRequest());
+        this.mockMvc.perform(get("/computeSum?input=1,-2,3"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(status().reason(containsString("Negative number not supported")));
     }
     
-    @Test    
+    @SuppressWarnings("deprecation")
+	@Test    
     public void testReturnError3() throws Exception {
-        this.mockMvc.perform(get("/computeSum?input=1, 22,3")).andDo(print()).andExpect(status().isBadRequest());
+        this.mockMvc.perform(get("/computeSum?input=1, 22,3"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(status().reason(containsString("Invalid input")));
     }
     
-    @Test    
+    @SuppressWarnings("deprecation")
+	@Test    
     public void testReturnError4() throws Exception {
-        this.mockMvc.perform(get("/computeSum?input=1+5+6&delimiter=x")).andDo(print()).andExpect(status().isBadRequest());
+        this.mockMvc.perform(get("/computeSum?input=1+5+6&delimiter=x"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(status().reason(containsString("Invalid delimiter")));
     }
     
 }

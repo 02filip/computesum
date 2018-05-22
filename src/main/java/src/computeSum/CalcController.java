@@ -1,6 +1,5 @@
 package src.computeSum;
 
-import java.io.UnsupportedEncodingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,7 +37,7 @@ public class CalcController  {
 	 */
 
 	public String compute(@RequestParam(value="input") String input,
-			@RequestParam(value="delimiter", defaultValue=",") String delimiter, Model model) throws UnsupportedEncodingException {
+			@RequestParam(value="delimiter", defaultValue=",") Character delimiter, Model model) {
 
 		/*
 		 *  Calculate class is ran and variable sum filled with the result
