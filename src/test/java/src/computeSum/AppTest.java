@@ -24,31 +24,82 @@ public class AppTest {
     private MockMvc mockMvc;
 
     /*
-     * Tests below check various input strings and the resulting status
-     * input = 1,2,3 -> 200 OK
-     * input = 100,12,5 -> 400 Bad Request
-     * input = 1,-2,3 -> 400 Bad Request
-     * input = 2, 13,5 -> 400 Bad Request
-     * input = 1+5+6, delimiter = x -> 400 Bad Request
+     * Tests below check various input strings and the resulting status and value
+     * In case of error, the message (reason) is checked if it is correct
      */
     @Test
-    public void testReturnSum() throws Exception {
-        this.mockMvc.perform(get("/computeSum?input=1,2,3")).andDo(print()).andExpect(status().isOk());
+    public void testReturnSum1() throws Exception {
+        this.mockMvc.perform(get("/computeSum?input=1,2,3"))
+        .andDo(print())
+        .andExpect(status().isOk());
+    }
+    
+    @Test
+    public void testReturnSum2() throws Exception {
+        this.mockMvc.perform(get("/computeSum?input=1"))
+        .andDo(print())
+        .andExpect(status().isOk());
+    }
+    
+    @Test
+    public void testReturnSum3() throws Exception {
+        this.mockMvc.perform(get("/computeSum?input=10;10;10;10;10&delimiter=;"))
+        .andDo(print())
+        .andExpect(status().isOk());
+    }
+    
+    @Test
+    public void testReturnSum4() throws Exception {
+        this.mockMvc.perform(get("/computeSum?input=1x2x3&delimiter=x"))
+        .andDo(print())
+        .andExpect(status().isOk());
+    }
+    
+    @Test
+    public void testReturnSum5() throws Exception {
+        this.mockMvc.perform(get("/computeSum?input=1 2 3&delimiter= "))
+        .andDo(print())
+        .andExpect(status().isOk());
+    }   
+    
+    @Test
+    public void testReturnSum6() throws Exception {
+        this.mockMvc.perform(get("/computeSum?input="))
+        .andDo(print())
+        .andExpect(status().isOk());
     }
     
     @SuppressWarnings("deprecation")
 	@Test    
     public void testReturnError1() throws Exception {
-        this.mockMvc.perform(get("/computeSum?input=100,12,5"))
+        this.mockMvc.perform(get("/computeSum?input=1;2;3&delimiter=."))
         .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(status().reason(containsString("Number higher than 100 not supported")));
+        .andExpect(status().reason(containsString("Invalid delimiter")));
     }
 
 	@SuppressWarnings("deprecation")
 	@Test    
     public void testReturnError2() throws Exception {
-        this.mockMvc.perform(get("/computeSum?input=1,-2,3"))
+        this.mockMvc.perform(get("/computeSum?input=1,2,3&delimiter=X"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(status().reason(containsString("Invalid delimiter")));
+    }
+    
+    @SuppressWarnings("deprecation")
+	@Test    
+    public void testReturnError3() throws Exception {
+        this.mockMvc.perform(get("/computeSum?input=1 2 3"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(status().reason(containsString("Invalid delimiter")));
+    }
+    
+    @SuppressWarnings("deprecation")
+	@Test    
+    public void testReturnError4() throws Exception {
+        this.mockMvc.perform(get("/computeSum?input=-12,10"))
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(status().reason(containsString("Negative number not supported")));
@@ -56,8 +107,17 @@ public class AppTest {
     
     @SuppressWarnings("deprecation")
 	@Test    
-    public void testReturnError3() throws Exception {
-        this.mockMvc.perform(get("/computeSum?input=1, 22,3"))
+    public void testReturnError5() throws Exception {
+        this.mockMvc.perform(get("/computeSum?input=101,10"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(status().reason(containsString("Number higher than 100 not supported")));
+    }
+    
+    @SuppressWarnings("deprecation")
+	@Test    
+    public void testReturnError6() throws Exception {
+        this.mockMvc.perform(get("/computeSum?input=Abc1%"))
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(status().reason(containsString("Invalid input")));
@@ -65,11 +125,10 @@ public class AppTest {
     
     @SuppressWarnings("deprecation")
 	@Test    
-    public void testReturnError4() throws Exception {
-        this.mockMvc.perform(get("/computeSum?input=1+5+6&delimiter=x"))
+    public void testReturnError7() throws Exception {
+        this.mockMvc.perform(get("/computeSum?input=12, 23,11"))
         .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(status().reason(containsString("Invalid delimiter")));
+        .andExpect(status().reason(containsString("Invalid input")));
     }
-    
 }
